@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PIC Schedule Dashboard</title>
+  <title>Jadwal & Penugasan PIC</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
@@ -26,129 +26,135 @@
     }
   </script>
 </head>
-<body class="h-full font-sans text-slate-800 antialiased flex flex-col">
+<body class="h-full font-sans text-slate-800 antialiased flex flex-col min-h-screen">
 
-  <!-- Navigation / Header -->
+  <!-- Header Section -->
   <header class="bg-slate-900 text-white shadow-md border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div class="flex items-center space-x-3">
-        <div class="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/30">
-          <i class="fa-solid me-0.5 fa-calendar-check text-xl text-white"></i>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex items-center space-x-3.5">
+        <div class="p-3 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/30">
+          <i class="fa-solid fa-church text-2xl text-white"></i>
         </div>
         <div>
-          <h1 class="text-xl font-bold tracking-tight text-white">PIC Schedule Dashboard</h1>
-          <p class="text-xs text-slate-400">Database & Jadwal Penugasan Personal</p>
+          <h1 class="text-xl font-bold tracking-tight text-white">Jadwal & Penugasan PIC</h1>
+          <p class="text-xs text-slate-400 mt-0.5">Database Sistem Penugasan Petugas Gereja</p>
         </div>
       </div>
 
-      <!-- API Configuration Bar -->
-      <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/80 flex flex-col sm:flex-row items-center gap-2 text-xs w-full md:w-auto">
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <span id="statusIndicator" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 whitespace-nowrap">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-            Belum Terhubung
-          </span>
-        </div>
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <input type="url" id="apiUrlInput" placeholder="https://script.google.com/macros/s/AKfycbwnO_5jfYhMEgnPsQjkxn4sBXTpkOXblH0ajFkO4WwMgScBHlhwZPEwb5peDGSKzHUD/exec" 
-            class="w-full sm:w-80 px-3 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs">
-          <button onclick="saveAndFetchUrl()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-lg transition shadow-sm whitespace-nowrap">
-            Simpan & Fetch
-          </button>
-        </div>
+      <!-- Live Connection Indicator -->
+      <div class="flex items-center gap-2">
+        <span id="statusBadge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+          Menghubungkan Ke Database...
+        </span>
       </div>
     </div>
   </header>
 
-  <!-- Main Container -->
+  <!-- Main Content Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- Metric Cards -->
+    <!-- KPI / Summary Metric Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Penugasan</p>
-          <h3 id="statTotalAssignments" class="text-2xl font-extrabold text-slate-900 mt-1">0</h3>
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Penugasan</p>
+          <h3 id="statTotalAssignments" class="text-3xl font-black text-slate-900 mt-1">0</h3>
+          <p class="text-xs text-slate-500 mt-1">Sesi penugasan aktif</p>
         </div>
         <div class="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-          <i class="fa-solid fa-list-check text-lg"></i>
+          <i class="fa-solid fa-clipboard-list text-xl"></i>
         </div>
       </div>
 
       <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Personnel (PIC)</p>
-          <h3 id="statActivePeople" class="text-2xl font-extrabold text-slate-900 mt-1">0</h3>
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Personel Unik</p>
+          <h3 id="statUniquePeople" class="text-3xl font-black text-slate-900 mt-1">0</h3>
+          <p class="text-xs text-slate-500 mt-1">Orang bertugas</p>
         </div>
         <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-          <i class="fa-solid fa-users text-lg"></i>
+          <i class="fa-solid fa-users text-xl"></i>
         </div>
       </div>
 
       <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
         <div>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Kategori Tugas</p>
-          <h3 id="statUniqueTasks" class="text-2xl font-extrabold text-slate-900 mt-1">0</h3>
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Tanggal Kegiatan</p>
+          <h3 id="statUniqueDates" class="text-3xl font-black text-slate-900 mt-1">0</h3>
+          <p class="text-xs text-slate-500 mt-1">Hari pelaksanaan</p>
         </div>
         <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-          <i class="fa-solid fa-tasks text-lg"></i>
+          <i class="fa-solid fa-calendar-day text-xl"></i>
         </div>
       </div>
     </div>
 
-    <!-- Filters & Tab Control Bar -->
+    <!-- Slicing Filters & Control Bar -->
     <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
-      <!-- Tabs Switcher -->
-      <div class="flex flex-wrap border-b border-slate-200 gap-2 pb-2">
-        <button onclick="switchTab('full')" id="tabBtnFull" class="px-4 py-2 rounded-xl text-sm font-semibold transition bg-indigo-50 text-indigo-700 border border-indigo-200">
-          <i class="fa-solid fa-table me-1.5"></i> Jadwal Lengkap
-        </button>
-        <button onclick="switchTab('person')" id="tabBtnPerson" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">
-          <i class="fa-solid fa-user-tag me-1.5"></i> Summary Per Personel
-        </button>
-        <button onclick="switchTab('task')" id="tabBtnTask" class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition">
-          <i class="fa-solid fa-layer-group me-1.5"></i> Summary Per Tugas
+      
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 gap-3">
+        <!-- View Toggle Buttons -->
+        <div class="flex items-center bg-slate-100 p-1 rounded-xl w-fit">
+          <button onclick="switchView('detail')" id="btnViewDetail" class="px-4 py-2 rounded-lg text-xs font-bold transition bg-white text-indigo-600 shadow-sm">
+            <i class="fa-solid fa-table me-1.5"></i> Tabel Detail
+          </button>
+          <button onclick="switchView('summary')" id="btnViewSummary" class="px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+            <i class="fa-solid fa-user-check me-1.5"></i> Ringkasan Per Personel
+          </button>
+        </div>
+
+        <!-- Reset Button -->
+        <button onclick="resetFilters()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-600 hover:text-indigo-600 bg-slate-100 hover:bg-indigo-50 rounded-xl transition border border-slate-200/60 self-start sm:self-auto">
+          <i class="fa-solid fa-rotate-left"></i> Reset Filter
         </button>
       </div>
 
-      <!-- Slicing Filters -->
-      <div id="filterControls" class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+      <!-- Search Inputs Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
         <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Cari Nama Personel</label>
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Cari Nama PIC</label>
           <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input type="text" id="personFilter" oninput="applyFilters()" placeholder="Contoh: Buntoro, mbak Warti..." 
+            <input type="text" id="filterPerson" oninput="applyFilters()" placeholder="Contoh: Buntoro, Mbak Warti..." 
               class="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Filter Jenis Tugas</label>
-          <select id="taskFilter" onchange="applyFilters()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition bg-white">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Kategori / Tugas</label>
+          <select id="filterTask" onchange="applyFilters()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition bg-white">
             <option value="">-- Semua Tugas --</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Filter Tanggal / Hari / Jam</label>
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tanggal / Jam</label>
           <div class="relative">
             <i class="fa-solid fa-clock absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-            <input type="text" id="dateFilter" oninput="applyFilters()" placeholder="Contoh: Sabtu, 2026-11-28, 16.00..." 
+            <input type="text" id="filterDateTime" oninput="applyFilters()" placeholder="Contoh: 2026-11-28, 16.00..." 
               class="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
           </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Filter Hari</label>
+          <select id="filterDay" onchange="applyFilters()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none transition bg-white">
+            <option value="">-- Semua Hari --</option>
+          </select>
         </div>
       </div>
     </div>
 
-    <!-- Data Views Section -->
+    <!-- Data Presentation Container -->
     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-
-      <!-- View 1: Full Schedule Table -->
-      <div id="viewFull" class="overflow-x-auto">
+      
+      <!-- Table View 1: Detailed List -->
+      <div id="viewDetailContainer" class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-slate-900 text-white text-xs uppercase tracking-wider sticky top-0 z-10">
-              <th class="py-3.5 px-4 font-semibold">Waktu / Session</th>
+              <th class="py-3.5 px-4 font-semibold">Waktu / Sesi</th>
               <th class="py-3.5 px-4 font-semibold">Hari & Tanggal</th>
               <th class="py-3.5 px-4 font-semibold">Jam</th>
               <th class="py-3.5 px-4 font-semibold">Nama PIC</th>
@@ -156,47 +162,39 @@
               <th class="py-3.5 px-4 font-semibold">Pasangan / Catatan</th>
             </tr>
           </thead>
-          <tbody id="tbodyFull" class="text-sm divide-y divide-slate-100">
-            <tr>
-              <td colspan="6" class="p-8 text-center text-slate-400">
-                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-indigo-500"></i>
-                <p>Memuat data dari Google Apps Script...</p>
-              </td>
-            </tr>
+          <tbody id="tbodyDetail" class="text-sm divide-y divide-slate-100">
+            <!-- Dynamic rows loaded here -->
           </tbody>
         </table>
       </div>
 
-      <!-- View 2: Summary by Person -->
-      <div id="viewPerson" class="hidden overflow-x-auto">
+      <!-- Table View 2: Person Summary -->
+      <div id="viewSummaryContainer" class="hidden overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-slate-900 text-white text-xs uppercase tracking-wider sticky top-0 z-10">
-              <th class="py-3.5 px-4 font-semibold">Nama Personel</th>
-              <th class="py-3.5 px-4 font-semibold">Total Tugas</th>
-              <th class="py-3.5 px-4 font-semibold">Rincian Peran / Tugas</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyPerson" class="text-sm divide-y divide-slate-100">
-            <!-- Dynamic Content -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- View 3: Summary by Task -->
-      <div id="viewTask" class="hidden overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="bg-slate-900 text-white text-xs uppercase tracking-wider sticky top-0 z-10">
-              <th class="py-3.5 px-4 font-semibold">Nama Tugas / Role</th>
+              <th class="py-3.5 px-4 font-semibold">Nama Personel (PIC)</th>
               <th class="py-3.5 px-4 font-semibold">Total Sesi Penugasan</th>
-              <th class="py-3.5 px-4 font-semibold">Jumlah Personnel Terlibat</th>
+              <th class="py-3.5 px-4 font-semibold">Daftar Tugas / Role Yang Diemban</th>
             </tr>
           </thead>
-          <tbody id="tbodyTask" class="text-sm divide-y divide-slate-100">
-            <!-- Dynamic Content -->
+          <tbody id="tbodySummary" class="text-sm divide-y divide-slate-100">
+            <!-- Dynamic summary loaded here -->
           </tbody>
         </table>
+      </div>
+
+      <!-- Unconfigured / Error Placeholder -->
+      <div id="unconfiguredMessage" class="hidden p-10 text-center space-y-4">
+        <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto">
+          <i class="fa-solid fa-plug-circle-xmark text-2xl"></i>
+        </div>
+        <div class="max-w-md mx-auto space-y-2">
+          <h3 class="text-lg font-bold text-slate-800">Apps Script URL Belum Dipasang</h3>
+          <p class="text-xs text-slate-500 leading-relaxed">
+            Buka file <code class="bg-slate-100 px-2 py-1 rounded text-rose-600 font-mono">index.html</code> Anda, lalu ganti nilai konstanta <code class="bg-slate-100 px-2 py-1 rounded text-rose-600 font-mono">APPS_SCRIPT_URL</code> dengan URL Google Apps Script Web App Anda.
+          </p>
+        </div>
       </div>
 
     </div>
@@ -204,145 +202,159 @@
   </main>
 
   <footer class="bg-white border-t border-slate-200 mt-auto py-4 text-center text-xs text-slate-500">
-    PIC Schedule Dashboard &copy; 2026. Self-Hosted Client Page.
+    Sistem Dashboard Penugasan PIC &copy; 2026.
   </footer>
 
+  <!-- Core JavaScript Logic -->
   <script>
+    // =========================================================================
+    // 1. CONFIGURATION CONSTANT (REPLACE WITH YOUR WEB APP URL)
+    // =========================================================================
+    const APPS_SCRIPT_URL = "PASANG_URL_APPS_SCRIPT_DI_SINI";
+
+    // Data State Variables
     let rawScheduleData = [];
-    let activeTab = 'full';
+    let currentView = 'detail';
 
+    // Page Load Initialization
     window.onload = function() {
-      const savedUrl = localStorage.getItem('pic_app_script_url');
-      if (savedUrl) {
-        document.getElementById('apiUrlInput').value = savedUrl;
-        fetchScheduleData(savedUrl);
-      } else {
-        updateStatus('unconfigured', 'Masukkan Apps Script Web App URL');
-        renderEmptyState('Silakan masukkan Google Apps Script Web App URL di pojok kanan atas untuk menghubungkan data.');
-      }
-    };
-
-    function saveAndFetchUrl() {
-      const url = document.getElementById('apiUrlInput').value.trim();
-      if (!url) {
-        alert('Mohon masukkan URL yang valid!');
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbwnO_5jfYhMEgnPsQjkxn4sBXTpkOXblH0ajFkO4WwMgScBHlhwZPEwb5peDGSKzHUD/exec") {
+        showUnconfiguredState();
         return;
       }
-      localStorage.setItem('pic_app_script_url', url);
-      fetchScheduleData(url);
-    }
+      fetchDataFromAppsScript();
+    };
 
-    function updateStatus(state, message) {
-      const el = document.getElementById('statusIndicator');
-      if (state === 'loading') {
-        el.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20';
-        el.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> ${message}`;
-      } else if (state === 'success') {
-        el.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-        el.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> ${message}`;
-      } else {
-        el.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20';
-        el.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-400"></span> ${message}`;
-      }
-    }
+    // Fetch JSON Endpoint
+    function fetchDataFromAppsScript() {
+      updateStatusBadge('loading', 'Memuat Data...');
+      showLoadingState();
 
-    function fetchScheduleData(url) {
-      updateStatus('loading', 'Menghubungkan...');
-      
-      fetch(url)
-        .then(res => {
-          if (!res.ok) throw new Error('Network error or invalid endpoint');
-          return res.json();
+      fetch(APPS_SCRIPT_URL)
+        .then(response => {
+          if (!response.ok) throw new Error("Gagal mengambil data dari endpoint server.");
+          return response.json();
         })
         .then(data => {
           if (!Array.isArray(data)) {
-            throw new Error('Data format error: Output Google Apps Script bukan JSON array.');
+            throw new Error("Format JSON tidak valid (harus array).");
           }
           rawScheduleData = data;
-          updateStatus('success', 'Terhubung');
-          populateTaskDropdown();
-          calculateStats();
+          updateStatusBadge('success', 'Terhubung');
+          hideUnconfiguredState();
+          populateDropdowns();
           applyFilters();
         })
         .catch(err => {
           console.error(err);
-          updateStatus('error', 'Gagal Terhubung');
-          renderEmptyState(`Error: Gagal mengambil data. Pastikan URL Web App sudah benar dan diset akses "Anyone".`);
+          updateStatusBadge('error', 'Gagal Terhubung');
+          showErrorState(`Gagal terhubung ke Google Apps Script. Pastikan Web App sudah dideploy dengan akses "Anyone". Error: ${err.message}`);
         });
     }
 
-    function calculateStats() {
-      const total = rawScheduleData.length;
-      const uniquePeople = new Set(rawScheduleData.map(d => d.Nama_PIC).filter(Boolean)).size;
-      const uniqueTasks = new Set(rawScheduleData.map(d => d.Tugas_Role).filter(Boolean)).size;
-
-      document.getElementById('statTotalAssignments').innerText = total;
-      document.getElementById('statActivePeople').innerText = uniquePeople;
-      document.getElementById('statUniqueTasks').innerText = uniqueTasks;
-    }
-
-    function populateTaskDropdown() {
+    // Populate Filter Options Dynamically
+    function populateDropdowns() {
+      // Task Roles Dropdown
       const tasks = [...new Set(rawScheduleData.map(item => item.Tugas_Role))].filter(Boolean).sort();
-      const select = document.getElementById('taskFilter');
-      select.innerHTML = '<option value="">-- Semua Tugas --</option>';
+      const taskSelect = document.getElementById('filterTask');
+      taskSelect.innerHTML = '<option value="">-- Semua Tugas --</option>';
       tasks.forEach(t => {
         const opt = document.createElement('option');
         opt.value = t;
         opt.textContent = t;
-        select.appendChild(opt);
+        taskSelect.appendChild(opt);
+      });
+
+      // Days Dropdown
+      const days = [...new Set(rawScheduleData.map(item => item.Hari))].filter(Boolean).sort();
+      const daySelect = document.getElementById('filterDay');
+      daySelect.innerHTML = '<option value="">-- Semua Hari --</option>';
+      days.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        daySelect.appendChild(opt);
       });
     }
 
+    // Apply Slicing & Filter Logic
     function applyFilters() {
-      const personQuery = document.getElementById('personFilter').value.toLowerCase();
-      const taskQuery = document.getElementById('taskFilter').value;
-      const dateQuery = document.getElementById('dateFilter').value.toLowerCase();
+      const personQuery = document.getElementById('filterPerson').value.toLowerCase().trim();
+      const taskQuery = document.getElementById('filterTask').value;
+      const dateTimeQuery = document.getElementById('filterDateTime').value.toLowerCase().trim();
+      const dayQuery = document.getElementById('filterDay').value;
 
       const filtered = rawScheduleData.filter(row => {
         const matchesPerson = !personQuery || String(row.Nama_PIC || '').toLowerCase().includes(personQuery);
         const matchesTask = !taskQuery || String(row.Tugas_Role || '') === taskQuery;
-        const matchesDate = !dateQuery || 
-                            String(row.Waktu_Asli || '').toLowerCase().includes(dateQuery) || 
-                            String(row.Hari || '').toLowerCase().includes(dateQuery) || 
-                            String(row.Tanggal || '').toLowerCase().includes(dateQuery);
+        const matchesDay = !dayQuery || String(row.Hari || '') === dayQuery;
+        const matchesDateTime = !dateTimeQuery || 
+                                String(row.Waktu_Asli || '').toLowerCase().includes(dateTimeQuery) || 
+                                String(row.Tanggal || '').toLowerCase().includes(dateTimeQuery) || 
+                                String(row.Jam || '').toLowerCase().includes(dateTimeQuery);
 
-        return matchesPerson && matchesTask && matchesDate;
+        return matchesPerson && matchesTask && matchesDay && matchesDateTime;
       });
 
-      renderTableFull(filtered);
-      renderTablePersonSummary(filtered);
-      renderTableTaskSummary(filtered);
+      updateStats(filtered);
+      renderDetailTable(filtered);
+      renderSummaryTable(filtered);
     }
 
-    function renderTableFull(data) {
-      const tbody = document.getElementById('tbodyFull');
+    // Reset All Filters
+    function resetFilters() {
+      document.getElementById('filterPerson').value = '';
+      document.getElementById('filterTask').value = '';
+      document.getElementById('filterDateTime').value = '';
+      document.getElementById('filterDay').value = '';
+      applyFilters();
+    }
+
+    // Update Top Summary Cards
+    function updateStats(filteredData) {
+      const totalAssignments = filteredData.length;
+      const uniquePeople = new Set(filteredData.map(d => d.Nama_PIC).filter(Boolean)).size;
+      const uniqueDates = new Set(filteredData.map(d => d.Tanggal).filter(Boolean)).size;
+
+      document.getElementById('statTotalAssignments').innerText = totalAssignments;
+      document.getElementById('statUniquePeople').innerText = uniquePeople;
+      document.getElementById('statUniqueDates').innerText = uniqueDates;
+    }
+
+    // Render Table View 1: Detail List
+    function renderDetailTable(data) {
+      const tbody = document.getElementById('tbodyDetail');
+
       if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">Tidak ada jadwal yang cocok dengan filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">Tidak ada jadwal penugasan yang sesuai dengan filter.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = data.map((r, i) => `
-        <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} hover:bg-indigo-50/50 transition">
-          <td class="py-3 px-4 font-medium text-slate-900">${r.Waktu_Asli || '-'}</td>
-          <td class="py-3 px-4 text-slate-600">${r.Hari ? r.Hari + ', ' : ''}${r.Tanggal || '-'}</td>
-          <td class="py-3 px-4 text-slate-600 font-mono text-xs">${r.Jam || '-'}</td>
-          <td class="py-3 px-4 font-semibold text-indigo-600">${r.Nama_PIC || '-'}</td>
-          <td class="py-3 px-4 text-slate-800">
-            <span class="inline-block px-2.5 py-1 bg-slate-100 text-slate-700 rounded-md text-xs font-medium">
+        <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} hover:bg-indigo-50/40 transition">
+          <td class="py-3 px-4 font-medium text-slate-900 whitespace-nowrap">${r.Waktu_Asli || '-'}</td>
+          <td class="py-3 px-4 text-slate-600 whitespace-nowrap">
+            <span class="font-medium">${r.Hari ? r.Hari + ', ' : ''}</span>${r.Tanggal || '-'}
+          </td>
+          <td class="py-3 px-4 text-slate-600 font-mono text-xs whitespace-nowrap">${r.Jam || '-'}</td>
+          <td class="py-3 px-4 font-bold text-indigo-700 whitespace-nowrap">${r.Nama_PIC || '-'}</td>
+          <td class="py-3 px-4">
+            <span class="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200/60 rounded-lg text-xs font-semibold">
               ${r.Tugas_Role || '-'}
             </span>
           </td>
-          <td class="py-3 px-4 text-slate-500">${r.Kelompok_Pasangan || '-'}</td>
+          <td class="py-3 px-4 text-slate-500 text-xs">${r.Kelompok_Pasangan || '-'}</td>
         </tr>
       `).join('');
     }
 
-    function renderTablePersonSummary(data) {
-      const tbody = document.getElementById('tbodyPerson');
+    // Render Table View 2: Person Summary
+    function renderSummaryTable(data) {
+      const tbody = document.getElementById('tbodySummary');
       const personMap = {};
 
       data.forEach(item => {
-        const name = item.Nama_PIC || 'Unassigned';
+        const name = item.Nama_PIC || 'Tanpa Nama';
         if (!personMap[name]) {
           personMap[name] = { count: 0, roles: new Set() };
         }
@@ -350,95 +362,112 @@
         if (item.Tugas_Role) personMap[name].roles.add(item.Tugas_Role);
       });
 
-      const sorted = Object.keys(personMap).sort((a,b) => personMap[b].count - personMap[a].count);
+      const sortedNames = Object.keys(personMap).sort((a, b) => personMap[b].count - personMap[a].count);
 
-      if (sorted.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400">Data kosong.</td></tr>`;
+      if (sortedNames.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400">Data personel tidak ditemukan.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = sorted.map((person, i) => `
-        <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} hover:bg-indigo-50/50 transition">
-          <td class="py-3 px-4 font-semibold text-slate-900">${person}</td>
-          <td class="py-3 px-4">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">
+      tbody.innerHTML = sortedNames.map((person, i) => `
+        <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} hover:bg-indigo-50/40 transition">
+          <td class="py-3.5 px-4 font-bold text-slate-900">${person}</td>
+          <td class="py-3.5 px-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
               ${personMap[person].count} Sesi
             </span>
           </td>
-          <td class="py-3 px-4 text-xs text-slate-600">
-            ${Array.from(personMap[person].roles).map(role => 
-              `<span class="inline-block mr-1 my-0.5 px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-slate-700">${role}</span>`
-            ).join('')}
+          <td class="py-3.5 px-4 text-xs">
+            <div class="flex flex-wrap gap-1">
+              ${Array.from(personMap[person].roles).map(role => 
+                `<span class="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-slate-700 font-medium">${role}</span>`
+              ).join('')}
+            </div>
           </td>
         </tr>
       `).join('');
     }
 
-    function renderTableTaskSummary(data) {
-      const tbody = document.getElementById('tbodyTask');
-      const taskMap = {};
+    // View Switching Logic
+    function switchView(view) {
+      currentView = view;
+      const vDetail = document.getElementById('viewDetailContainer');
+      const vSummary = document.getElementById('viewSummaryContainer');
+      const btnDetail = document.getElementById('btnViewDetail');
+      const btnSummary = document.getElementById('btnViewSummary');
 
-      data.forEach(item => {
-        const task = item.Tugas_Role || 'Lain-lain';
-        if (!taskMap[task]) {
-          taskMap[task] = { count: 0, people: new Set() };
-        }
-        taskMap[task].count++;
-        if (item.Nama_PIC) taskMap[task].people.add(item.Nama_PIC);
-      });
-
-      const sorted = Object.keys(taskMap).sort((a,b) => taskMap[b].count - taskMap[a].count);
-
-      if (sorted.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400">Data kosong.</td></tr>`;
-        return;
+      if (view === 'detail') {
+        vDetail.classList.remove('hidden');
+        vSummary.classList.add('hidden');
+        btnDetail.className = 'px-4 py-2 rounded-lg text-xs font-bold transition bg-white text-indigo-600 shadow-sm';
+        btnSummary.className = 'px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+      } else {
+        vDetail.classList.add('hidden');
+        vSummary.classList.remove('hidden');
+        btnSummary.className = 'px-4 py-2 rounded-lg text-xs font-bold transition bg-white text-indigo-600 shadow-sm';
+        btnDetail.className = 'px-4 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
       }
+    }
 
-      tbody.innerHTML = sorted.map((task, i) => `
-        <tr class="${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} hover:bg-indigo-50/50 transition">
-          <td class="py-3 px-4 font-semibold text-slate-900">${task}</td>
-          <td class="py-3 px-4">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-              ${taskMap[task].count} Penugasan
-            </span>
-          </td>
-          <td class="py-3 px-4 text-xs text-slate-600">
-            <span class="font-bold text-slate-800">${taskMap[task].people.size} Personel Unique</span>
+    // UI State Helpers
+    function updateStatusBadge(state, message) {
+      const badge = document.getElementById('statusBadge');
+      if (state === 'loading') {
+        badge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20';
+        badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span> ${message}`;
+      } else if (state === 'success') {
+        badge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> ${message}`;
+      } else {
+        badge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20';
+        badge.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span> ${message}`;
+      }
+    }
+
+    function showLoadingState() {
+      document.getElementById('tbodyDetail').innerHTML = `
+        <tr>
+          <td colspan="6" class="p-10 text-center text-slate-400">
+            <i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-600 mb-2"></i>
+            <p class="text-xs font-medium">Sedang memuat data dari Google Apps Script...</p>
           </td>
         </tr>
-      `).join('');
+      `;
     }
 
-    function renderEmptyState(msg) {
-      document.getElementById('tbodyFull').innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">${msg}</td></tr>`;
+    function showErrorState(msg) {
+      document.getElementById('tbodyDetail').innerHTML = `
+        <tr>
+          <td colspan="6" class="p-8 text-center text-rose-500 text-xs">
+            <i class="fa-solid fa-triangle-exclamation text-xl mb-1"></i>
+            <p>${msg}</p>
+          </td>
+        </tr>
+      `;
     }
 
-    function switchTab(tab) {
-      activeTab = tab;
-      
-      // Hide all views
-      document.getElementById('viewFull').classList.add('hidden');
-      document.getElementById('viewPerson').classList.add('hidden');
-      document.getElementById('viewTask').classList.add('hidden');
+    function showUnconfiguredState() {
+      updateStatusBadge('error', 'Belum Dikonfigurasi');
+      document.getElementById('viewDetailContainer').classList.add('hidden');
+      document.getElementById('viewSummaryContainer').classList.add('hidden');
+      document.getElementById('unconfiguredMessage').classList.remove('hidden');
+    }
 
-      // Reset Tab Styles
-      ['Full', 'Person', 'Task'].forEach(t => {
-        const btn = document.getElementById('tabBtn' + t);
-        btn.className = 'px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition';
-      });
-
-      // Show Selected View & Highlight Tab
-      if (tab === 'full') {
-        document.getElementById('viewFull').classList.remove('hidden');
-        document.getElementById('tabBtnFull').className = 'px-4 py-2 rounded-xl text-sm font-semibold transition bg-indigo-50 text-indigo-700 border border-indigo-200';
-      } else if (tab === 'person') {
-        document.getElementById('viewPerson').classList.remove('hidden');
-        document.getElementById('tabBtnPerson').className = 'px-4 py-2 rounded-xl text-sm font-semibold transition bg-indigo-50 text-indigo-700 border border-indigo-200';
-      } else if (tab === 'task') {
-        document.getElementById('viewTask').classList.remove('hidden');
-        document.getElementById('tabBtnTask').className = 'px-4 py-2 rounded-xl text-sm font-semibold transition bg-indigo-50 text-indigo-700 border border-indigo-200';
+    function hideUnconfiguredState() {
+      document.getElementById('unconfiguredMessage').classList.add('hidden');
+      if (currentView === 'detail') {
+        document.getElementById('viewDetailContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('viewSummaryContainer').classList.remove('hidden');
       }
     }
   </script>
 </body>
 </html>
+```
+
+### Key Highlights
+1. **Direct Connection:** Line `302` has `const APPS_SCRIPT_URL = "PASANG_URL_APPS_SCRIPT_DI_SINI";`. Simply paste your Google Apps Script Web App URL there, upload this `index.html` file to GitHub Pages, and it will load automatically.
+2. **Clean Configuration-Free Header:** Removed all configuration URL text boxes and status bars.
+3. **Comprehensive Search & Slicing:** Includes fast filtering by PIC Person Name, Dynamic Task Dropdown, Date/Time text search, and Day dropdown with a one-click Reset button.
+4. **View Toggle:** Seamlessly switches between "Tabel Detail" and "Ringkasan Per Personel".
